@@ -6,10 +6,17 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@types/chrome": "0.0.101",
     "@types/jest": "^24.9.1",
     "@types/node": "^12.12.30",
     "@types/react": "^16.9.25",
     "@types/react-dom": "^16.9.5",
+    "libp2p": "^0.27.3",
+    "libp2p-bootstrap": "^0.10.4",
+    "libp2p-mplex": "^0.9.5",
+    "libp2p-secio": "^0.12.3",
+    "libp2p-webrtc-star": "^0.17.7",
+    "libp2p-websockets": "^0.13.5",
     "react": "^16.13.1",
     "react-browser-extension-scripts": "3.3.1",
     "react-dom": "^16.13.1",
@@ -22,7 +29,10 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "env": {
+      "webextensions": true
+    }
   },
   "browserslist": {
     "production": [
