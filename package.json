@@ -13,6 +13,7 @@
     "@types/react-dom": "^16.9.5",
     "libp2p": "^0.27.3",
     "libp2p-bootstrap": "^0.10.4",
+    "libp2p-kad-dht": "^0.18.5",
     "libp2p-mplex": "^0.9.5",
     "libp2p-secio": "^0.12.3",
     "libp2p-webrtc-star": "^0.17.7",
