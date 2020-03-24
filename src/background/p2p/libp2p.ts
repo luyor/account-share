@@ -7,8 +7,9 @@ import Bootstrap from 'libp2p-bootstrap'
 import DHT from 'libp2p-kad-dht'
 import PeerInfo from 'peer-info'
 import Multiaddr from 'multiaddr'
+import PeerId from 'peer-id'
+import * as Storage from 'utils/storage'
 
-import Storage from '../storage'
 
 const bootstrapers = [
   '/dns4/ams-1.bootstrap.libp2p.io/tcp/443/wss/p2p/QmSoLer265NRgSp2LA3dPaeykiS1J6DifTC88f5uVQKNAd',
@@ -46,8 +47,20 @@ const options = {
   }
 }
 
+// Get my peer id from chrome.storage.local, generate one if not exist
+async function getMyPeerId() {
+  try {
+    const idJson = await Storage.local.get(Storage.Keys.PeerId)
+    return await PeerId.createFromJSON(idJson)
+  } catch  {
+    const id = await PeerId.create()
+    await Storage.local.set(Storage.Keys.PeerId, id.toJSON())
+    return id
+  }
+}
+
 async function create() {
-  const peerId = await Storage.getMyPeerId()
+  const peerId = await getMyPeerId()
   const peerInfo = await PeerInfo.create(peerId)
   peerInfo.multiaddrs.add(webrtcStarAddr.encapsulate(`/p2p/${peerId.toB58String()}`))
 
