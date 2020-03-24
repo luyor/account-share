@@ -103,7 +103,7 @@ declare module 'libp2p' {
         on(event: LibP2p.Events, cb: (event: any) => any): this;
         once(event: LibP2p.Events, cb: (event: any) => any): this;
         removeListener(event: LibP2p.Events, cb: (event: any) => any): this;
-        ping(peerInfo: PeerInfo | string): Promise<void>;
+        ping(peerInfo: PeerInfo | string): Promise<number>;
         start(): Promise<void>;
         stop(): Promise<void>;
     }
