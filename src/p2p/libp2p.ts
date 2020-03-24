@@ -48,7 +48,7 @@ const options = {
 }
 
 // Get my peer id from chrome.storage.local, generate one if not exist
-async function getMyPeerId() {
+async function loadMyPeerId() {
   try {
     const idJson = await Storage.local.get(Storage.Keys.PeerId)
     return await PeerId.createFromJSON(idJson)
@@ -60,7 +60,7 @@ async function getMyPeerId() {
 }
 
 async function create() {
-  const peerId = await getMyPeerId()
+  const peerId = await loadMyPeerId()
   const peerInfo = await PeerInfo.create(peerId)
   peerInfo.multiaddrs.add(webrtcStarAddr.encapsulate(`/p2p/${peerId.toB58String()}`))
 

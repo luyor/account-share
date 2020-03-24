@@ -5,11 +5,11 @@ import PeerInfo from 'peer-info'
 import { create as createLibp2p } from './libp2p'
 
 export default class Node {
-  private static instance: Node
-  constructor(readonly libp2p: Libp2p) {
-    this.libp2p = libp2p
-  }
+  constructor(
+    readonly libp2p: Libp2p
+  ) { }
 
+  private static instance: Node
   public static async getInstance() {
     if (!Node.instance) {
       const libp2p = await createLibp2p()

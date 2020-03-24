@@ -1,4 +1,4 @@
-import Node from './p2p'
+import Node from 'p2p/node'
 
 async function main() {
   const node = await Node.getInstance()
