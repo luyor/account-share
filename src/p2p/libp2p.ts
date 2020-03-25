@@ -65,7 +65,7 @@ async function create() {
   peerInfo.multiaddrs.add(webrtcStarAddr.encapsulate(`/p2p/${peerId.toB58String()}`))
 
   const libp2p = await Libp2p.create({ ...options, peerInfo })
-  console.log(`my peer id is ${peerId.toB58String()}`)
+  console.info(`my peer id is ${peerId.toB58String()}`)
 
   await libp2p.start()
   return libp2p
