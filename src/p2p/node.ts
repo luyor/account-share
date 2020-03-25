@@ -6,7 +6,7 @@ import { create as createLibp2p } from './libp2p'
 
 // Node singleton maintains p2p functions
 export default class Node {
-  constructor(
+  private constructor(
     readonly libp2p: Libp2p
   ) { }
 

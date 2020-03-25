@@ -3,15 +3,16 @@ import Node from './node'
 
 import * as Storage from 'utils/storage'
 import { PeerInterface, Libp2pPeer } from 'p2p/peer'
+import { EventEmitter } from 'events'
 
 // FriendManager singleton
-export class FriendManager {
-  constructor(
-    readonly node: Node,
+class FriendManager {
+  private constructor(
+    private readonly node: Node,
     readonly friends: PeerInterface[],
     readonly updateLatencyInterval = 3000,
   ) {
-    setInterval(() => this.friends.forEach(async f => f.updateLatency(node)), updateLatencyInterval)
+    setInterval(this.updateLatency, updateLatencyInterval)
   }
 
   private static instance: FriendManager
@@ -41,4 +42,10 @@ export class FriendManager {
   async addFriend(peer: PeerInterface) {
     this.friends.push(peer)
   }
+
+  private updateLatency() {
+    this.friends.forEach(async f => f.updateLatency(this.node))
+  }
 }
+
+export default FriendManager
