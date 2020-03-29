@@ -1,6 +1,6 @@
 enum Keys {
   PeerId = "PeerId",
-  FriendTypeLibp2p = "FriendTypeLibp2p",
+  FriendLibp2p = "FriendLibp2p",
 }
 
 class ChromeStorage {

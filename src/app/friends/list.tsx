@@ -1,24 +1,32 @@
-import React, { useState, useEffect } from 'react'
 import { GridList } from '@material-ui/core'
-
 import FriendManager from 'p2p/friend-manager'
+import { PeerInterface } from 'p2p/peer'
+import React, { useEffect, useState } from 'react'
+import FriendItem from './item'
 
-function useFriendsStatus(fm: FriendManager) {
-  const [friendsOnline, setFriendsOnline] = useState([])
+function useFriends() {
+  const [friends, setFriends] = useState(new Set<PeerInterface>())
 
   useEffect(() => {
+    (async () => {
+      const fm = await FriendManager.getInstance()
+      const sub = fm.friends$.subscribe(setFriends)
+      return sub.unsubscribe
+    })()
+  }, [])
 
-  })
-
-  return friendsOnline
+  return friends
 }
 
-function FriendsList() {
+function FriendList() {
+  const friends = useFriends()
   return (
-    <GridList >
-
+    <GridList>
+      {Array.from(friends).map(friend =>
+        <FriendItem key={friend.id} friend={friend} />
+      )}
     </GridList>
   )
 }
 
-export default FriendsList
+export default FriendList
