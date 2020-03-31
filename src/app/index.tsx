@@ -6,8 +6,8 @@ import FriendsPanel from './friends'
 
 const useStyles = makeStyles({
   root: {
-    minHeight: "300px",
-    minWidth: "200px",
+    height: "300px",
+    width: "200px",
   }
 })
 

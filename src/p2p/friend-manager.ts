@@ -1,50 +1,69 @@
-import { Libp2pPeer, PeerInterface } from 'p2p/peer'
-import PeerId from 'peer-id'
+import { Peer, PeerJson } from 'p2p/peer'
 import { BehaviorSubject, interval } from 'rxjs'
 import * as Storage from 'utils/storage'
 import Node from './node'
 
+const loadFriendsJson = () => Storage.local.get(Storage.Keys.Friends) as Promise<PeerJson[]>
+const saveFriendsJson = (json: PeerJson[]) => Storage.local.set(Storage.Keys.Friends, json)
+
 // FriendManager singleton
 class FriendManager {
+  readonly friends$: BehaviorSubject<Map<string, Peer>>
   private constructor(
     private readonly node: Node,
-    readonly friends$: BehaviorSubject<Set<PeerInterface>>,
-    updateLatencyInterval = 3000,
+    friendMap: Map<string, Peer>,
+    public updateLatencyInterval = 3000,
   ) {
-    interval(updateLatencyInterval)
-      .subscribe(
-        () => this.friends$.value.forEach(
-          friend => friend.updateLatency(node)
-        )
-      )
+    this.friends$ = new BehaviorSubject<Map<string, Peer>>(friendMap)
+    this.updateLatencyOnInterval()
   }
 
-  private static instance: FriendManager
+  private static instance: Promise<FriendManager>
   public static async getInstance() {
     if (!FriendManager.instance) {
-      const node = await Node.getInstance()
-      const initFriends = await FriendManager.loadFriendsLibp2p()
-      const fm = new FriendManager(node, new BehaviorSubject<Set<PeerInterface>>(initFriends))
-      FriendManager.instance = fm
+      FriendManager.instance = (async () => {
+        const node = await Node.getInstance()
+        const friends = await FriendManager.loadFriends()
+        const fm = new FriendManager(node, friends)
+        return fm
+      })()
     }
     return FriendManager.instance;
   }
 
-  static async loadFriendsLibp2p() {
+  static async loadFriends() {
+    const friendMap = new Map<string, Peer>()
     try {
-      const friendsJson = await Storage.local.get(Storage.Keys.FriendLibp2p) as PeerId.JSONPeerId[]
-      const friends = await Promise.all(friendsJson.map(v => Libp2pPeer.fromJson(v)))
-      console.info(`Loaded ${friends.length} friends`, friends)
-      return new Set(friends)
-    } catch{
-      return new Set<PeerInterface>()
+      const friendsJson = await loadFriendsJson()
+      const friends = await Promise.all(friendsJson.map(Peer.fromJson))
+      friends.forEach(f => {
+        if (f !== undefined) {
+          friendMap.set(f.id, f)
+        }
+      })
+    } catch (e) {
+      console.log(e)
     }
+    return friendMap
   }
 
-  async addFriend(friend: PeerInterface) {
-    const newFriendSet = this.friends$.value.add(friend)
-    await Storage.local.set(Storage.Keys.FriendLibp2p, Array.from(newFriendSet))
-    this.friends$.next(newFriendSet)
+  updateLatencyOnInterval() {
+    interval(this.updateLatencyInterval)
+      .subscribe(
+        () => this.friends$.value.forEach(
+          friend => friend.updateLatency(this.node)
+        )
+      )
+  }
+
+  async addFriend(friend: Peer) {
+    if (friend.id in this.friends$.value) {
+      throw new Error("duplicate peer id")
+    }
+    const newFriendsMap = new Map(this.friends$.value)
+    newFriendsMap.set(friend.id, friend)
+    await saveFriendsJson(Array.from(newFriendsMap.values()).map(v => v.toJson()))
+    this.friends$.next(newFriendsMap)
   }
 }
 

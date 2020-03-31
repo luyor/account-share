@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { PeerInterface } from 'p2p/peer'
+import { Peer } from 'p2p/peer'
+import { Card, CardContent, Typography } from '@material-ui/core'
 
-export interface FriendItemProp { friend: PeerInterface }
+export interface FriendItemProp { friend: Peer }
 
-function useFriendAlive(friend: PeerInterface) {
+function useFriendAlive(friend: Peer) {
   const [alive, setAlive] = useState(false)
 
   useEffect(() => {
     const sub = friend.alive$.subscribe(setAlive)
-    return sub.unsubscribe
+    return () => sub.unsubscribe()
   }, [friend.alive$])
 
   return alive
@@ -17,11 +18,14 @@ function useFriendAlive(friend: PeerInterface) {
 function FriendItem(props: FriendItemProp) {
   const { friend } = props
   const alive = useFriendAlive(friend)
+  console.log(alive)
   return (
-    <div>
-      <div>{friend.id}</div>
-      <div>{alive}</div>
-    </div>
+    <Card>
+      <CardContent>
+        <Typography>{friend.id}</Typography>
+        <Typography>{alive ? "alive" : "dead"}</Typography>
+      </CardContent>
+    </Card>
   )
 }
 export default FriendItem

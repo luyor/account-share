@@ -19,22 +19,27 @@ const useStyles = makeStyles(theme =>
 
 function AddFriendDialog(props: { open: boolean, handleClose: () => void }) {
   const { open, handleClose } = props
-  const [idInput, setIdInput] = useState("")
+  const [idInput, setIdInput] = useState("QmSoLer265NRgSp2LA3dPaeykiS1J6DifTC88f5uVQKNAd")
 
   const handleSubmit = () => {
-    console.log("onsubmit")
-    // async () => {
-    //   const fm = await FriendManager.getInstance()
-    //   const id = PeerId.createFromB58String(idInput)
-    //   const friend = await Libp2pPeer.fromId(id)
-    //   await fm.addFriend(friend)
-    //   handleClose()
-    // }()
+    (async () => {
+      console.log(idInput)
+      try {
+        const id = PeerId.createFromB58String(idInput)
+        const friend = await Libp2pPeer.fromId(id)
+        const fm = await FriendManager.getInstance()
+        await fm.addFriend(friend)
+        handleClose()
+      } catch (e) {
+        console.error(e)
+      }
+    })()
   }
 
   return (
     <Dialog fullScreen open={open} onClose={handleClose} >
       <TextField
+        value={idInput}
         onChange={event => { setIdInput(event.target.value) }}
         label="Friend id"
         InputProps={{
@@ -72,7 +77,6 @@ function AddFriendLayer() {
   const [open, setOpen] = useState(false)
   const handleClickOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
-  console.info("render")
   return (
     <span>
       <AddFriendDialog open={open} handleClose={handleClose} />
