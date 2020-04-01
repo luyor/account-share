@@ -19,11 +19,10 @@ const useStyles = makeStyles(theme =>
 
 function AddFriendDialog(props: { open: boolean, handleClose: () => void }) {
   const { open, handleClose } = props
-  const [idInput, setIdInput] = useState("QmSoLer265NRgSp2LA3dPaeykiS1J6DifTC88f5uVQKNAd")
+  const [idInput, setIdInput] = useState("")
 
   const handleSubmit = () => {
     (async () => {
-      console.log(idInput)
       try {
         const id = PeerId.createFromB58String(idInput)
         const friend = await Libp2pPeer.fromId(id)

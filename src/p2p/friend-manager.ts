@@ -4,9 +4,6 @@ import * as Storage from 'utils/storage'
 import Node from './node'
 import BackgroundPublic from 'background/public'
 
-const loadFriendsJson = () => Storage.local.get(Storage.Keys.Friends) as Promise<PeerJson[]>
-const saveFriendsJson = (json: PeerJson[]) => Storage.local.set(Storage.Keys.Friends, json)
-
 // FriendManager singleton
 class FriendManager {
   readonly friends$: BehaviorSubject<Map<string, Peer>>
@@ -35,7 +32,7 @@ class FriendManager {
   static async loadFriends() {
     const friendMap = new Map<string, Peer>()
     try {
-      const friendsJson = await loadFriendsJson()
+      const friendsJson = await Storage.local.get(Storage.Keys.Friends) as PeerJson[]
       const friends = await Promise.all(friendsJson.map(Peer.fromJson))
       friends.forEach(f => {
         if (f !== undefined) {
@@ -43,9 +40,14 @@ class FriendManager {
         }
       })
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
     return friendMap
+  }
+
+  static async saveFriends(newFriendsMap: Map<string, Peer>) {
+    const json = Array.from(newFriendsMap.values()).map(v => v.toJson())
+    await Storage.local.set(Storage.Keys.Friends, json)
   }
 
   updateLatencyOnInterval() {
@@ -63,7 +65,18 @@ class FriendManager {
     }
     const newFriendsMap = new Map(this.friends$.value)
     newFriendsMap.set(friend.id, friend)
-    await saveFriendsJson(Array.from(newFriendsMap.values()).map(v => v.toJson()))
+    await FriendManager.saveFriends(newFriendsMap)
+    this.friends$.next(newFriendsMap)
+  }
+
+  async deleteFriend(friend: Peer | string) {
+    const id = friend instanceof Peer ? friend.id : friend
+    if (!this.friends$.value.has(id)) {
+      throw new Error("peer id not exist")
+    }
+    const newFriendsMap = new Map(this.friends$.value)
+    newFriendsMap.delete(id)
+    await FriendManager.saveFriends(newFriendsMap)
     this.friends$.next(newFriendsMap)
   }
 }

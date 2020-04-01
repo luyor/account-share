@@ -1,4 +1,4 @@
-import { GridList } from '@material-ui/core'
+import { List, ListItem } from '@material-ui/core'
 import FriendManager from 'p2p/friend-manager'
 import { Peer } from 'p2p/peer'
 import React, { useEffect, useState } from 'react'
@@ -21,11 +21,13 @@ function useFriends() {
 function FriendList() {
   const friends = useFriends()
   return (
-    <GridList>
+    <List>
       {Array.from(friends.values()).map(friend =>
-        <FriendItem key={friend.id} friend={friend} />
+        <ListItem key={friend.id} divider>
+          <FriendItem friend={friend} />
+        </ListItem>
       )}
-    </GridList>
+    </List >
   )
 }
 

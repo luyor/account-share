@@ -6,8 +6,8 @@ import AddFriendLayer from './add'
 function FriendsPanel() {
   return (
     <Box>
-      <AddFriendLayer />
       <FriendList />
+      <AddFriendLayer />
     </Box>
   )
 }
