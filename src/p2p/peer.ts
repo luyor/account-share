@@ -28,7 +28,11 @@ export abstract class Peer {
 
   updateLatency(node: Node) {
     from(this.ping(node)).subscribe(
-      v => this.latency$.next(v)
+      v => this.latency$.next(v),
+      e => {
+        console.error(e)
+        this.latency$.next(-1)
+      }
     )
   }
   abstract async ping(node: Node): Promise<number>
