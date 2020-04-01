@@ -27,10 +27,11 @@ export abstract class Peer {
   )
 
   updateLatency(node: Node) {
+    console.debug(`updating ${this.id}`)
     from(this.ping(node)).subscribe(
       v => this.latency$.next(v),
       e => {
-        console.error(e)
+        console.error(`Failed to ping ${this.id}`, e)
         this.latency$.next(-1)
       }
     )
@@ -40,14 +41,14 @@ export abstract class Peer {
 }
 
 export class Libp2pPeer extends Peer {
-  static protocol = "p2p"
   readonly id: string
+  static readonly protocol = "p2p"
   readonly protocol = Libp2pPeer.protocol
   constructor(
     readonly peerInfo: PeerInfo,
   ) {
     super()
-    this.id = peerInfo.id.toB58String()
+    this.id = `/${this.protocol}/${peerInfo.id.toB58String()}`
   }
 
   async ping(node: Node) {

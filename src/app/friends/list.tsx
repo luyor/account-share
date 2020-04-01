@@ -10,10 +10,7 @@ function useFriends() {
   useEffect(() => {
     (async () => {
       const fm = await FriendManager.getInstance()
-      const sub = fm.friends$.subscribe(v => {
-        console.log("new list")
-        setFriends(v)
-      })
+      const sub = fm.friends$.subscribe(setFriends)
       return sub.unsubscribe
     })()
   }, [])
@@ -23,7 +20,6 @@ function useFriends() {
 
 function FriendList() {
   const friends = useFriends()
-  console.log("render")
   return (
     <GridList>
       {Array.from(friends.values()).map(friend =>

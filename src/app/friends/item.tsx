@@ -18,7 +18,6 @@ function useFriendAlive(friend: Peer) {
 function FriendItem(props: FriendItemProp) {
   const { friend } = props
   const alive = useFriendAlive(friend)
-  console.log(alive)
   return (
     <Card>
       <CardContent>
