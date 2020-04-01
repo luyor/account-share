@@ -2,6 +2,7 @@ import { Peer, PeerJson } from 'p2p/peer'
 import { BehaviorSubject, interval } from 'rxjs'
 import * as Storage from 'utils/storage'
 import Node from './node'
+import BackgroundPublic from 'background/public'
 
 const loadFriendsJson = () => Storage.local.get(Storage.Keys.Friends) as Promise<PeerJson[]>
 const saveFriendsJson = (json: PeerJson[]) => Storage.local.set(Storage.Keys.Friends, json)
@@ -22,7 +23,7 @@ class FriendManager {
   public static async getInstance() {
     if (!FriendManager.instance) {
       FriendManager.instance = (async () => {
-        const node = await Node.getInstance()
+        const node = await BackgroundPublic.getBackgroundPublic().node
         const friends = await FriendManager.loadFriends()
         const fm = new FriendManager(node, friends)
         return fm
