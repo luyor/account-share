@@ -1,32 +1,13 @@
-import React from 'react'
-import { Box, Fab } from '@material-ui/core'
-import { makeStyles, createStyles } from '@material-ui/core/styles'
-import { Add as AddIcon } from '@material-ui/icons'
-
-import FriendManager from 'p2p/friend-manager'
-
-const useStyles = makeStyles(theme =>
-  createStyles({
-    fab: {
-      position: 'absolute',
-      bottom: theme.spacing(2),
-      right: theme.spacing(2),
-    }
-  }),
-);
+import { Box } from '@material-ui/core';
+import React from 'react';
+import FriendList from './list';
+import AddFriendLayer from './add'
 
 function FriendsPanel() {
-  const styles = useStyles()
   return (
     <Box>
-      <Fab
-        color="primary"
-        aria-label="add"
-        size="small"
-        className={styles.fab}
-      >
-        <AddIcon />
-      </Fab>
+      <FriendList />
+      <AddFriendLayer />
     </Box>
   )
 }

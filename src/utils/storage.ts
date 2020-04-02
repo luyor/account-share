@@ -1,6 +1,6 @@
 enum Keys {
   PeerId = "PeerId",
-  FriendTypeLibp2p = "FriendTypeLibp2p",
+  Friends = "Friends",
 }
 
 class ChromeStorage {
@@ -20,7 +20,7 @@ class ChromeStorage {
   }
 
   async set(key: string, value: any) {
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.area.set({ [key]: value }, () => {
         chrome.runtime.lastError === undefined ?
           resolve() :

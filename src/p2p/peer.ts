@@ -1,38 +1,74 @@
-import PeerInfo from 'peer-info'
 import PeerId from 'peer-id'
-
+import PeerInfo from 'peer-info'
+import { from, BehaviorSubject } from 'rxjs'
+import { map } from 'rxjs/operators'
 import Node from './node'
 
-export abstract class PeerInterface {
-  // negative means not connected
-  private _latency: number = -1
-  get latency() {
-    return this._latency
-  }
-  get alive() { return this.latency < 0 }
-
-  async updateLatency(node: Node) {
-    this._latency = await this.ping(node)
-  }
-  abstract async ping(node: Node): Promise<number>
+export interface PeerJson {
+  id: string
+  protocol: string
 }
 
-export class Libp2pPeer extends PeerInterface {
+export abstract class Peer {
+  static async fromJson(json: PeerJson) {
+    switch (json.protocol) {
+      case Libp2pPeer.protocol:
+        return Libp2pPeer.fromJson(json)
+      default:
+        console.error(`not supported peer json protocol: ${json.protocol}`, json)
+    }
+  }
+  abstract readonly id: string
+  abstract readonly protocol: string
+  // < 0 means not connected
+  latency$ = new BehaviorSubject<number>(-1)
+  alive$ = this.latency$.pipe(
+    map(latency => latency >= 0)
+  )
+
+  updateLatency(node: Node) {
+    console.debug(`updating ${this.id}`)
+    from(this.ping(node)).subscribe(
+      v => this.latency$.next(v),
+      e => {
+        console.error(`Failed to ping ${this.id}`, e)
+        this.latency$.next(-1)
+      }
+    )
+  }
+  abstract async ping(node: Node): Promise<number>
+  abstract toJson(): PeerJson
+}
+
+export class Libp2pPeer extends Peer {
+  readonly id: string
+  static readonly protocol = "p2p"
+  readonly protocol = Libp2pPeer.protocol
   constructor(
     readonly peerInfo: PeerInfo,
-  ) { super() }
+  ) {
+    super()
+    this.id = `/${this.protocol}/${peerInfo.id.toB58String()}`
+  }
 
   async ping(node: Node) {
     return await node.libp2p.ping(this.peerInfo)
   }
 
-  static async fromJson(json: PeerId.JSONPeerId) {
-    const id = await PeerId.createFromJSON(json)
+  static async fromId(id: PeerId) {
     const info = await PeerInfo.create(id)
     return new Libp2pPeer(info)
   }
 
-  toJson(): PeerId.JSONPeerId {
-    return this.peerInfo.id.toJSON()
+  static async fromJson(json: object) {
+    const id = await PeerId.createFromJSON(json as PeerId.JSONPeerId)
+    return await Libp2pPeer.fromId(id)
+  }
+
+  toJson(): PeerJson {
+    return {
+      ...this.peerInfo.id.toJSON(),
+      protocol: this.protocol,
+    }
   }
 }
