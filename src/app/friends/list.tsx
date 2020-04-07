@@ -1,5 +1,5 @@
 import { List, ListItem } from '@material-ui/core'
-import FriendManager from 'lib/p2p/friend-manager'
+import FriendManager from 'lib/p2p/friendManager'
 import { Peer } from 'lib/p2p/peer'
 import React, { useEffect, useState } from 'react'
 import FriendItem from './item'

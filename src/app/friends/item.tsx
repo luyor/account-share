@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Peer } from 'lib/p2p/peer'
 import { Typography, Box, Button } from '@material-ui/core'
-import FriendManager from 'lib/p2p/friend-manager'
+import FriendManager from 'lib/p2p/friendManager'
 
 export interface FriendItemProp { friend: Peer }
 
