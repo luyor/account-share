@@ -8,7 +8,7 @@ import DHT from 'libp2p-kad-dht'
 import PeerInfo from 'peer-info'
 import Multiaddr from 'multiaddr'
 import PeerId from 'peer-id'
-import * as Storage from 'utils/storage'
+import * as Storage from 'lib/utils/storage'
 
 
 const bootstrapers = [

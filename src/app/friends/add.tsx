@@ -2,8 +2,8 @@ import { Fab, Dialog, Button, TextField, InputAdornment } from '@material-ui/cor
 import { Add as AddIcon } from '@material-ui/icons'
 import React, { useState } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import FriendManager from 'p2p/friend-manager'
-import { Libp2pPeer } from 'p2p/peer'
+import FriendManager from 'lib/p2p/friend-manager'
+import { Libp2pPeer } from 'lib/p2p/peer'
 import PeerId from 'peer-id'
 
 const useStyles = makeStyles(theme =>

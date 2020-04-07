@@ -1,6 +1,6 @@
-import { Peer, PeerJson } from 'p2p/peer'
+import { Peer, PeerJson } from 'lib/p2p/peer'
 import { BehaviorSubject, interval } from 'rxjs'
-import * as Storage from 'utils/storage'
+import * as Storage from 'lib/utils/storage'
 import Node from './node'
 import BackgroundPublic from 'background/public'
 

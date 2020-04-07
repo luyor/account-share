@@ -1,4 +1,4 @@
-import Node from 'p2p/node'
+import Node from 'lib/p2p/node'
 
 // BackgroundPublic contains public objects of background scripts,
 // can be access in popup by chrome.extension.getBackground()
